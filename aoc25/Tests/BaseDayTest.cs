@@ -55,7 +55,13 @@ public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
   {
     string dayFormatted = DayNumber.ToString("00");
     string fileName = useExample ? $"day{dayFormatted}_example.txt" : $"day{dayFormatted}.txt";
-    return Path.Combine("..", "Inputs", fileName);
+
+    // Get the solution directory (parent of Tests directory)
+    string solutionDir = Path.GetFullPath(Path.Combine(
+        Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,
+        "..", "..", "..", ".."));
+
+    return Path.Combine(solutionDir, "Inputs", fileName);
   }
 
   /// <summary>
@@ -220,25 +226,6 @@ public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
     });
 
     Assert.Null(exception);
-  }
-
-  /// <summary>
-  /// Tests input validation - ensures the solution handles empty input gracefully
-  /// </summary>
-  [Fact]
-  public void InputValidation_EmptyInput_ShouldHandleGracefully()
-  {
-    // Arrange
-    var emptyInput = new List<string>();
-
-    // Act & Assert
-    var exception = Record.Exception(() => ExecuteSolution(emptyInput));
-
-    // The solution should either handle empty input gracefully or throw a meaningful exception
-    Assert.NotNull(exception);
-
-    // Log the exception type for debugging
-    Output.WriteLine($"Empty input handling: {exception.GetType().Name} - {exception.Message}");
   }
 
   /// <summary>

@@ -484,4 +484,4 @@ $RECYCLE.BIN/
 *.swp
 
 # Folders
-./Inputs
+aoc25/Inputs/*.txt

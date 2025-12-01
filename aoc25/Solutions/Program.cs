@@ -1,11 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Reflection;
 using Cocona;
+using Solutions;
 
 var app = CoconaApp.Create();
 
 app.AddCommand("hello", () => Console.WriteLine("Hello, World!"));
-app.AddCommand("run", (string day) =>
+app.AddCommand("run", (string day, string part) =>
 {
   try
   {
@@ -42,11 +43,12 @@ app.AddCommand("run", (string day) =>
       return;
     }
 
-    // 5. Check if class has a Run method
-    MethodInfo? runMethod = dayType.GetMethod("Run");
-    if (runMethod == null)
+    // 5. Check if class has a Part1 and Part2 method
+    MethodInfo? part1 = dayType.GetMethod("Part1");
+    MethodInfo? part2 = dayType.GetMethod("Part2");
+    if (part1 == null || part2 == null)
     {
-      Console.WriteLine($"Error: {className} class does not have a Run method.");
+      Console.WriteLine($"Error: {className} class does not have correct methods.");
       return;
     }
 
@@ -59,7 +61,19 @@ app.AddCommand("run", (string day) =>
     }
 
     Console.WriteLine($"Running solution for day {dayNumber}...");
-    runMethod.Invoke(dayInstance, null);
+
+    // Read input data for the solution
+    List<string> inputData = BaseDay.ReadInput(inputFilePath);
+
+    if (part == "1")
+    {
+      Console.WriteLine($"Part 1: {part1.Invoke(dayInstance, [inputData])}");
+    }
+    else
+    {
+      Console.WriteLine($"Part 2: {part2.Invoke(dayInstance, [inputData])}");
+    }
+
     Console.WriteLine($"Solution for day {dayNumber} completed.");
   }
   catch (Exception ex)
