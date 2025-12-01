@@ -28,24 +28,20 @@ public partial class Day1 : BaseDay
   public override string Part2(List<string> input)
   {
     var startingNumber = 50;
-    var fullRotations = 0;
     var regex = MyRegex();
-    var turns = input.Select(l =>
+    return input.Select(l =>
     {
       var match = regex.Match(l);
       var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
       var amount = int.Parse(match.Groups[2].Value);
       return new Turns(dir, amount);
-    });
-
-    foreach (var turn in turns)
+    }).Select(t =>
     {
-      var (rotations, position) = FullRotations(startingNumber, turn);
-      fullRotations += rotations;
+      var (rotation, position) = FullRotations(startingNumber, t);
       startingNumber = position;
-    }
+      return rotation;
+    }).Sum().ToString();
 
-    return fullRotations.ToString();
   }
 
   public record Turns(Direction Direction, int Amount);
