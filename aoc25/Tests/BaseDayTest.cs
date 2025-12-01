@@ -1,5 +1,4 @@
 using Solutions;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Tests;

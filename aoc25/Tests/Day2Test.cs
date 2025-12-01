@@ -1,3 +1,4 @@
+
 using Solutions;
 using Xunit.Abstractions;
 
@@ -8,7 +9,7 @@ namespace Tests;
 /// This shows how to implement tests for a specific Advent of Code day
 /// Replace 'Day1' with your actual solution class name
 /// </summary>
-public class Day1Test(ITestOutputHelper output) : BaseDayTest<Day1>(output) // Replace 'Day1' with your actual class
+public class Day2Test(ITestOutputHelper output) : BaseDayTest<Day2>(output) // Replace 'Day1' with your actual class
 {
   protected override int DayNumber => 1;
 
@@ -18,7 +19,7 @@ public class Day1Test(ITestOutputHelper output) : BaseDayTest<Day1>(output) // R
   // Enable this only after you've solved the day and want to test against actual input
   // protected override bool TestAgainstActualInput => true;
 
-  protected override void ProcessInput(Day1 instance, List<string> input)
+  protected override void ProcessInput(Day2 instance, List<string> input)
   {
     // This is where the specific day implementation would run
     // For Day1, this might call instance.Run() or specific methods
