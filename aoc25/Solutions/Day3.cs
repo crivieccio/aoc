@@ -9,7 +9,7 @@ public class Day3 : BaseDay
   private static readonly int _batteryBankSize = 12;
   public override string Part1(List<string> input) => GetJoltage(input).Sum().ToString();
 
-  public override string Part2(List<string> input) => GetLargestJoltage(input).Sum().ToString();
+  public override string Part2(List<string> input) => input.Select(GetLargestJoltage).Sum().ToString();
 
   private static IEnumerable<int> GetJoltage(List<string> input)
   {
@@ -31,47 +31,17 @@ public class Day3 : BaseDay
     }
   }
 
-  private static IEnumerable<long> GetLargestJoltage(List<string> input)
+  private static long GetLargestJoltage(string input)
   {
     var builder = new StringBuilder();
-    foreach (var line in input)
+    builder.Clear();
+    for (var count = _batteryBankSize; count > 0; count--)
     {
-      var startIdx = FindStart(line);
-      builder.Append(line[startIdx]);
-      var next = startIdx + 1;
-      while (builder.Length < _batteryBankSize && next < line.Length - 1)
-      {
-        //Take the larger of next or next + 1
-        var current = long.Parse($"{line[next]}");
-        var nextVal = long.Parse($"{line[next + 1]}");
-        if (nextVal > current) current = nextVal;
-        builder.Append(current);
-        next += 2;
-
-        //if builder.length + line[next..] == 12 append line and yield return
-        if (builder.Length + line[next..].Length == _batteryBankSize)
-        {
-          builder.Append(line[next..]);
-          var testInner = builder.ToString();
-          yield return long.Parse(builder.ToString());
-        }
-      }
-      var test = builder.ToString();
-      yield return long.Parse(builder.ToString());
-      builder.Clear();
+      char max = input[..^(count - 1)].Max();
+      input = input[(input.IndexOf(max) + 1)..];
+      builder.Append(max);
     }
-  }
-
-  private static int FindStart(string line)
-  {
-    var rest = line[..^_batteryBankSize];
-    var highest = int.Parse(rest[0].ToString());
-    var highestIdx = 0;
-    for (var i = 1; i < rest.Length; i++)
-    {
-      var current = int.Parse(rest[i].ToString());
-      if (current > highest) highest = i;
-    }
-    return highestIdx;
+    return long.Parse(builder.ToString());
   }
 }
+
