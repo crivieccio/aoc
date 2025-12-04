@@ -4,6 +4,16 @@ using Xunit.Abstractions;
 namespace Tests;
 
 /// <summary>
+/// Context indicating which part of the solution should be executed
+/// </summary>
+public enum TestPartContext
+{
+  Part1,
+  Part2,
+  Both
+}
+
+/// <summary>
 /// Base class for Advent of Code day tests.
 /// Provides common functionality for testing solutions including example validation,
 /// input file management, and performance testing.
@@ -96,8 +106,11 @@ public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
       // Create a new instance for each test to ensure clean state
       var instance = new T();
 
+      // Detect which test is calling this method and determine the part context
+      var partContext = BaseDayTest<T>.DetectTestContext();
+
       // Process input (this would need to be implemented by the specific day)
-      ProcessInput(instance, input);
+      ProcessInput(instance, input, partContext);
 
       return stringWriter.ToString().Trim();
     }
@@ -108,11 +121,32 @@ public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
   }
 
   /// <summary>
+  /// Detects which part to execute based on the calling test method
+  /// </summary>
+  /// <returns>The part context to execute</returns>
+  private static TestPartContext DetectTestContext()
+  {
+    var stackTrace = new System.Diagnostics.StackTrace();
+    var testName = stackTrace.GetFrames()
+        .Select(f => f.GetMethod()?.Name)
+        .FirstOrDefault(m => m?.Contains("Part1_ExampleInput_ShouldMatchExpected") == true ||
+                            m?.Contains("Part2_ExampleInput_ShouldMatchExpected") == true);
+
+    if (testName?.Contains("Part1_") == true)
+      return TestPartContext.Part1;
+    else if (testName?.Contains("Part2_") == true)
+      return TestPartContext.Part2;
+    else
+      return TestPartContext.Both;
+  }
+
+  /// <summary>
   /// Template method for processing input - to be overridden by specific day implementations
   /// </summary>
   /// <param name="instance">The day instance</param>
   /// <param name="input">The input data</param>
-  protected virtual void ProcessInput(T instance, List<string> input)
+  /// <param name="context">The test context indicating which part to execute</param>
+  protected virtual void ProcessInput(T instance, List<string> input, TestPartContext context)
   {
     // Default implementation - subclasses should override this
     // This is where the specific day would implement its logic

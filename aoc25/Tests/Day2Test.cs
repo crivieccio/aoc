@@ -19,35 +19,20 @@ public class Day2Test(ITestOutputHelper output) : BaseDayTest<Day2>(output) // R
   // Enable this only after you've solved the day and want to test against actual input
   protected override bool TestAgainstActualInput => false;
 
-  protected override void ProcessInput(Day2 instance, List<string> input)
+  protected override void ProcessInput(Day2 instance, List<string> input, TestPartContext context)
   {
-    // This test framework calls ProcessInput for both Part1 and Part2 tests
-    // We need to determine which part to run based on the context
-
-    // Check if we're being called from Part1 or Part2 test by examining the stack
-    var stackTrace = new System.Diagnostics.StackTrace();
-    var testName = stackTrace.GetFrames()
-        .Select(f => f.GetMethod()?.Name)
-        .FirstOrDefault(m => m?.Contains("Part1_ExampleInput_ShouldMatchExpected") == true ||
-                            m?.Contains("Part2_ExampleInput_ShouldMatchExpected") == true);
-
-    if (testName?.Contains("Part1_") == true)
+    switch (context)
     {
-      var result = instance.Part1(input);
-      Console.WriteLine(result);
-    }
-    else if (testName?.Contains("Part2_") == true)
-    {
-      var result = instance.Part2(input);
-      Console.WriteLine(result);
-    }
-    else
-    {
-      // Fallback: run both parts
-      var result1 = instance.Part1(input);
-      var result2 = instance.Part2(input);
-      Console.WriteLine($"Part1: {result1}");
-      Console.WriteLine($"Part2: {result2}");
+      case TestPartContext.Part1:
+        Console.WriteLine(instance.Part1(input));
+        break;
+      case TestPartContext.Part2:
+        Console.WriteLine(instance.Part2(input));
+        break;
+      case TestPartContext.Both:
+        Console.WriteLine($"Part1: {instance.Part1(input)}");
+        Console.WriteLine($"Part2: {instance.Part2(input)}");
+        break;
     }
   }
 }

@@ -18,7 +18,7 @@ public class Day1Test(ITestOutputHelper output) : BaseDayTest<Day1>(output) // R
   // Enable this only after you've solved the day and want to test against actual input
   // protected override bool TestAgainstActualInput => true;
 
-  protected override void ProcessInput(Day1 instance, List<string> input)
+  protected override void ProcessInput(Day1 instance, List<string> input, TestPartContext context)
   {
     // This is where the specific day implementation would run
     // For Day1, this might call instance.Run() or specific methods
