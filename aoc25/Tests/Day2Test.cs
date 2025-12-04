@@ -18,21 +18,4 @@ public class Day2Test(ITestOutputHelper output) : BaseDayTest<Day2>(output) // R
 
   // Enable this only after you've solved the day and want to test against actual input
   protected override bool TestAgainstActualInput => false;
-
-  protected override void ProcessInput(Day2 instance, List<string> input, TestPartContext context)
-  {
-    switch (context)
-    {
-      case TestPartContext.Part1:
-        Console.WriteLine(instance.Part1(input));
-        break;
-      case TestPartContext.Part2:
-        Console.WriteLine(instance.Part2(input));
-        break;
-      case TestPartContext.Both:
-        Console.WriteLine($"Part1: {instance.Part1(input)}");
-        Console.WriteLine($"Part2: {instance.Part2(input)}");
-        break;
-    }
-  }
 }

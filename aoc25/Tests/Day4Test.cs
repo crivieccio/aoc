@@ -12,21 +12,4 @@ public class Day4Test(ITestOutputHelper output) : BaseDayTest<Day4>(output)
   protected override string Part2ExampleExpected => "43";
 
   protected override bool TestAgainstActualInput => false;
-
-  protected override void ProcessInput(Day4 instance, List<string> input, TestPartContext context)
-  {
-    switch (context)
-    {
-      case TestPartContext.Part1:
-        Console.WriteLine(instance.Part1(input));
-        break;
-      case TestPartContext.Part2:
-        Console.WriteLine(instance.Part2(input));
-        break;
-      case TestPartContext.Both:
-        Console.WriteLine($"Part1: {instance.Part1(input)}");
-        Console.WriteLine($"Part2: {instance.Part2(input)}");
-        break;
-    }
-  }
 }

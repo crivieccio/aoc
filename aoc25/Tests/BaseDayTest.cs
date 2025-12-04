@@ -141,16 +141,27 @@ public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
   }
 
   /// <summary>
-  /// Template method for processing input - to be overridden by specific day implementations
+  /// Default implementation that handles Part1/Part2 execution logic
+  /// Derived classes can override this if they need custom behavior
   /// </summary>
   /// <param name="instance">The day instance</param>
   /// <param name="input">The input data</param>
   /// <param name="context">The test context indicating which part to execute</param>
   protected virtual void ProcessInput(T instance, List<string> input, TestPartContext context)
   {
-    // Default implementation - subclasses should override this
-    // This is where the specific day would implement its logic
-    throw new NotImplementedException($"ProcessInput not implemented for {typeof(T).Name}");
+    switch (context)
+    {
+      case TestPartContext.Part1:
+        Console.WriteLine(instance.Part1(input));
+        break;
+      case TestPartContext.Part2:
+        Console.WriteLine(instance.Part2(input));
+        break;
+      case TestPartContext.Both:
+        Console.WriteLine($"Part1: {instance.Part1(input)}");
+        Console.WriteLine($"Part2: {instance.Part2(input)}");
+        break;
+    }
   }
 
   #region Test Methods
