@@ -5,69 +5,69 @@ namespace Solutions;
 
 public partial class Day1 : BaseDay
 {
-  public override string Part1(List<string> input)
-  {
-    var startingNumber = 50;
-    var regex = MyRegex();
-    return input.Select(l =>
+    public override string Part1(List<string> input)
     {
-      var match = regex.Match(l);
-      var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
-      var amount = int.Parse(match.Groups[2].Value);
-      return new Turns(dir, amount);
-    })
-    .Select(t =>
-    {
-      startingNumber = CalculateNewPosition(startingNumber, t);
-      return startingNumber;
-    })
-    .Count(x => x == 0)
-    .ToString();
-  }
-
-  public override string Part2(List<string> input)
-  {
-    var startingNumber = 50;
-    var regex = MyRegex();
-    return input.Select(l =>
-    {
-      var match = regex.Match(l);
-      var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
-      var amount = int.Parse(match.Groups[2].Value);
-      return new Turns(dir, amount);
-    }).Select(t =>
-    {
-      var (rotation, position) = FullRotations(startingNumber, t);
-      startingNumber = position;
-      return rotation;
-    }).Sum().ToString();
-
-  }
-
-  public record Turns(Direction Direction, int Amount);
-  public enum Direction { Left, Right }
-
-  [GeneratedRegex("([LR])(\\d+)")]
-  private static partial Regex MyRegex();
-
-  private static int CalculateNewPosition(int startingNumber, Turns turn) => turn.Direction switch
-  {
-    Direction.Left => (100 + (startingNumber - turn.Amount)) % 100,
-    Direction.Right => (100 + startingNumber + turn.Amount) % 100,
-    _ => throw new InvalidOperationException("Invalid direction")
-  };
-
-  private static (int, int) FullRotations(int startingNumber, Turns turn)
-  {
-    var steps = Enumerable.Range(0, turn.Amount);
-    var zeroes = 0;
-    var position = startingNumber;
-    foreach (var step in steps)
-    {
-      var newPosition = CalculateNewPosition(position, turn with { Amount = 1 });
-      if (newPosition == 0) zeroes++;
-      position = newPosition;
+        var startingNumber = 50;
+        var regex = MyRegex();
+        return input.Select(l =>
+        {
+            var match = regex.Match(l);
+            var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
+            var amount = int.Parse(match.Groups[2].Value);
+            return new Turns(dir, amount);
+        })
+        .Select(t =>
+        {
+            startingNumber = CalculateNewPosition(startingNumber, t);
+            return startingNumber;
+        })
+        .Count(x => x == 0)
+        .ToString();
     }
-    return (zeroes, CalculateNewPosition(startingNumber, turn));
-  }
+
+    public override string Part2(List<string> input)
+    {
+        var startingNumber = 50;
+        var regex = MyRegex();
+        return input.Select(l =>
+        {
+            var match = regex.Match(l);
+            var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
+            var amount = int.Parse(match.Groups[2].Value);
+            return new Turns(dir, amount);
+        }).Select(t =>
+        {
+            var (rotation, position) = FullRotations(startingNumber, t);
+            startingNumber = position;
+            return rotation;
+        }).Sum().ToString();
+
+    }
+
+    public record Turns(Direction Direction, int Amount);
+    public enum Direction { Left, Right }
+
+    [GeneratedRegex("([LR])(\\d+)")]
+    private static partial Regex MyRegex();
+
+    private static int CalculateNewPosition(int startingNumber, Turns turn) => turn.Direction switch
+    {
+        Direction.Left => (100 + (startingNumber - turn.Amount)) % 100,
+        Direction.Right => (100 + startingNumber + turn.Amount) % 100,
+        _ => throw new InvalidOperationException("Invalid direction")
+    };
+
+    private static (int, int) FullRotations(int startingNumber, Turns turn)
+    {
+        var steps = Enumerable.Range(0, turn.Amount);
+        var zeroes = 0;
+        var position = startingNumber;
+        foreach (var step in steps)
+        {
+            var newPosition = CalculateNewPosition(position, turn with { Amount = 1 });
+            if (newPosition == 0) zeroes++;
+            position = newPosition;
+        }
+        return (zeroes, CalculateNewPosition(startingNumber, turn));
+    }
 }

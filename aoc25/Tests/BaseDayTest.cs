@@ -1,4 +1,5 @@
 using Solutions;
+
 using Xunit.Abstractions;
 
 namespace Tests;
@@ -8,9 +9,9 @@ namespace Tests;
 /// </summary>
 public enum TestPartContext
 {
-  Part1,
-  Part2,
-  Both
+    Part1,
+    Part2,
+    Both
 }
 
 /// <summary>
@@ -21,316 +22,316 @@ public enum TestPartContext
 /// <typeparam name="T">The solution class type that inherits from BaseDay</typeparam>
 public abstract class BaseDayTest<T> : IDisposable where T : BaseDay, new()
 {
-  protected readonly ITestOutputHelper Output;
-  protected readonly T DayInstance;
+    protected readonly ITestOutputHelper Output;
+    protected readonly T DayInstance;
 
-  /// <summary>
-  /// The day number (1-25) represented by this test class
-  /// </summary>
-  protected abstract int DayNumber { get; }
+    /// <summary>
+    /// The day number (1-25) represented by this test class
+    /// </summary>
+    protected abstract int DayNumber { get; }
 
-  /// <summary>
-  /// Expected result for part 1 with example input
-  /// </summary>
-  protected abstract string Part1ExampleExpected { get; }
+    /// <summary>
+    /// Expected result for part 1 with example input
+    /// </summary>
+    protected abstract string Part1ExampleExpected { get; }
 
-  /// <summary>
-  /// Expected result for part 2 with example input
-  /// </summary>
-  protected abstract string Part2ExampleExpected { get; }
+    /// <summary>
+    /// Expected result for part 2 with example input
+    /// </summary>
+    protected abstract string Part2ExampleExpected { get; }
 
-  /// <summary>
-  /// Whether to test against actual input files (disabled by default to avoid spoilers)
-  /// </summary>
-  protected virtual bool TestAgainstActualInput => false;
+    /// <summary>
+    /// Whether to test against actual input files (disabled by default to avoid spoilers)
+    /// </summary>
+    protected virtual bool TestAgainstActualInput => false;
 
-  /// <summary>
-  /// Maximum acceptable execution time in milliseconds for performance testing
-  /// </summary>
-  protected virtual int MaxExecutionTimeMs => 5000;
+    /// <summary>
+    /// Maximum acceptable execution time in milliseconds for performance testing
+    /// </summary>
+    protected virtual int MaxExecutionTimeMs => 5000;
 
-  public BaseDayTest(ITestOutputHelper output)
-  {
-    Output = output;
-    DayInstance = new T();
-  }
-
-  /// <summary>
-  /// Gets the path to the input file for the day
-  /// </summary>
-  /// <param name="useExample">If true, returns example input path; otherwise returns actual input path</param>
-  /// <returns>Path to the input file</returns>
-  protected string GetInputPath(bool useExample = false)
-  {
-    string dayFormatted = DayNumber.ToString("00");
-    string fileName = useExample ? $"day{dayFormatted}_example.txt" : $"day{dayFormatted}.txt";
-
-    // Get the solution directory (parent of Tests directory)
-    string solutionDir = Path.GetFullPath(Path.Combine(
-        Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,
-        "..", "..", "..", ".."));
-
-    return Path.Combine(solutionDir, "Inputs", fileName);
-  }
-
-  /// <summary>
-  /// Reads input from file, handling both example and actual inputs
-  /// </summary>
-  /// <param name="useExample">If true, reads example input; otherwise reads actual input</param>
-  /// <returns>List of input lines</returns>
-  protected List<string> ReadInput(bool useExample = false)
-  {
-    string inputPath = GetInputPath(useExample);
-
-    if (!File.Exists(inputPath))
+    public BaseDayTest(ITestOutputHelper output)
     {
-      throw new FileNotFoundException($"Input file not found: {inputPath}");
+        Output = output;
+        DayInstance = new T();
     }
 
-    return BaseDay.ReadInput(inputPath);
-  }
-
-  /// <summary>
-  /// Executes the solution and captures output for testing
-  /// </summary>
-  /// <param name="input">Input data to process</param>
-  /// <returns>Captured console output</returns>
-  protected string ExecuteSolution(List<string> input)
-  {
-    var originalOut = Console.Out;
-    var stringWriter = new StringWriter();
-    Console.SetOut(stringWriter);
-
-    try
+    /// <summary>
+    /// Gets the path to the input file for the day
+    /// </summary>
+    /// <param name="useExample">If true, returns example input path; otherwise returns actual input path</param>
+    /// <returns>Path to the input file</returns>
+    protected string GetInputPath(bool useExample = false)
     {
-      // Create a new instance for each test to ensure clean state
-      var instance = new T();
+        string dayFormatted = DayNumber.ToString("00");
+        string fileName = useExample ? $"day{dayFormatted}_example.txt" : $"day{dayFormatted}.txt";
 
-      // Detect which test is calling this method and determine the part context
-      var partContext = BaseDayTest<T>.DetectTestContext();
+        // Get the solution directory (parent of Tests directory)
+        string solutionDir = Path.GetFullPath(Path.Combine(
+            Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!,
+            "..", "..", "..", ".."));
 
-      // Process input (this would need to be implemented by the specific day)
-      ProcessInput(instance, input, partContext);
-
-      return stringWriter.ToString().Trim();
-    }
-    finally
-    {
-      Console.SetOut(originalOut);
-    }
-  }
-
-  /// <summary>
-  /// Detects which part to execute based on the calling test method
-  /// </summary>
-  /// <returns>The part context to execute</returns>
-  private static TestPartContext DetectTestContext()
-  {
-    var stackTrace = new System.Diagnostics.StackTrace();
-    var testName = stackTrace.GetFrames()
-        .Select(f => f.GetMethod()?.Name)
-        .FirstOrDefault(m => m?.Contains("Part1_ExampleInput_ShouldMatchExpected") == true ||
-                            m?.Contains("Part2_ExampleInput_ShouldMatchExpected") == true);
-
-    if (testName?.Contains("Part1_") == true)
-      return TestPartContext.Part1;
-    else if (testName?.Contains("Part2_") == true)
-      return TestPartContext.Part2;
-    else
-      return TestPartContext.Both;
-  }
-
-  /// <summary>
-  /// Default implementation that handles Part1/Part2 execution logic
-  /// Derived classes can override this if they need custom behavior
-  /// </summary>
-  /// <param name="instance">The day instance</param>
-  /// <param name="input">The input data</param>
-  /// <param name="context">The test context indicating which part to execute</param>
-  protected virtual void ProcessInput(T instance, List<string> input, TestPartContext context)
-  {
-    switch (context)
-    {
-      case TestPartContext.Part1:
-        Console.WriteLine(instance.Part1(input));
-        break;
-      case TestPartContext.Part2:
-        Console.WriteLine(instance.Part2(input));
-        break;
-      case TestPartContext.Both:
-        Console.WriteLine($"Part1: {instance.Part1(input)}");
-        Console.WriteLine($"Part2: {instance.Part2(input)}");
-        break;
-    }
-  }
-
-  #region Test Methods
-
-  /// <summary>
-  /// Tests that the example input produces the expected result for part 1
-  /// </summary>
-  [Fact]
-  public void Part1_ExampleInput_ShouldMatchExpected()
-  {
-    // Arrange
-    var exampleInput = ReadInput(useExample: true);
-
-    // Act
-    var startTime = DateTime.UtcNow;
-    string result = ExecuteSolution(exampleInput);
-    var executionTime = DateTime.UtcNow - startTime;
-
-    // Output timing information
-    Output.WriteLine($"Part 1 execution time: {executionTime.TotalMilliseconds:F2}ms");
-
-    // Assert
-    Assert.Equal(Part1ExampleExpected, result);
-
-    // Performance assertion
-    Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
-        $"Part 1 exceeded maximum execution time of {MaxExecutionTimeMs}ms (actual: {executionTime.TotalMilliseconds:F2}ms)");
-  }
-
-  /// <summary>
-  /// Tests that the example input produces the expected result for part 2
-  /// </summary>
-  [Fact]
-  public void Part2_ExampleInput_ShouldMatchExpected()
-  {
-    // Arrange
-    var exampleInput = ReadInput(useExample: true);
-
-    // Act
-    var startTime = DateTime.UtcNow;
-    string result = ExecuteSolution(exampleInput);
-    var executionTime = DateTime.UtcNow - startTime;
-
-    // Output timing information
-    Output.WriteLine($"Part 2 execution time: {executionTime.TotalMilliseconds:F2}ms");
-
-    // Assert
-    Assert.Equal(Part2ExampleExpected, result);
-
-    // Performance assertion
-    Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
-        $"Part 2 exceeded maximum execution time of {MaxExecutionTimeMs}ms (actual: {executionTime.TotalMilliseconds:F2}ms)");
-  }
-
-  /// <summary>
-  /// Tests against actual input (disabled by default to avoid spoilers)
-  /// </summary>
-  [Fact]
-  public void Part1_ActualInput_ShouldComplete()
-  {
-    if (!TestAgainstActualInput)
-    {
-      Output.WriteLine("Skipping actual input test - TestAgainstActualInput is false");
-      return;
+        return Path.Combine(solutionDir, "Inputs", fileName);
     }
 
-    // Arrange
-    var actualInput = ReadInput(useExample: false);
-
-    // Act
-    var startTime = DateTime.UtcNow;
-    string result = ExecuteSolution(actualInput);
-    var executionTime = DateTime.UtcNow - startTime;
-
-    // Output results
-    Output.WriteLine($"Part 1 actual result: {result}");
-    Output.WriteLine($"Part 1 actual execution time: {executionTime.TotalMilliseconds:F2}ms");
-
-    // Assert - just verify it completes without throwing
-    Assert.NotNull(result);
-    Assert.NotEmpty(result);
-
-    // Performance assertion for actual input
-    Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs * 2,
-        $"Part 1 actual input exceeded extended execution time of {MaxExecutionTimeMs * 2}ms");
-  }
-
-  /// <summary>
-  /// Performance test to ensure solution completes within reasonable time
-  /// </summary>
-  [Fact]
-  public void PerformanceTest_ShouldCompleteWithinTimeLimit()
-  {
-    // Arrange
-    var testInput = ReadInput(useExample: true);
-
-    // Act & Assert with timeout
-    var exception = Record.Exception(() =>
+    /// <summary>
+    /// Reads input from file, handling both example and actual inputs
+    /// </summary>
+    /// <param name="useExample">If true, reads example input; otherwise reads actual input</param>
+    /// <returns>List of input lines</returns>
+    protected List<string> ReadInput(bool useExample = false)
     {
-      var startTime = DateTime.UtcNow;
-      ExecuteSolution(testInput);
-      var executionTime = DateTime.UtcNow - startTime;
+        string inputPath = GetInputPath(useExample);
 
-      Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
-              $"Solution exceeded performance threshold: {executionTime.TotalMilliseconds:F2}ms > {MaxExecutionTimeMs}ms");
-    });
+        if (!File.Exists(inputPath))
+        {
+            throw new FileNotFoundException($"Input file not found: {inputPath}");
+        }
 
-    Assert.Null(exception);
-  }
+        return BaseDay.ReadInput(inputPath);
+    }
 
-  /// <summary>
-  /// Tests that the solution can be instantiated multiple times (stateless behavior)
-  /// </summary>
-  [Fact]
-  public void InstantiationTest_ShouldBeStateless()
-  {
-    // Arrange
-    var input = ReadInput(useExample: true);
+    /// <summary>
+    /// Executes the solution and captures output for testing
+    /// </summary>
+    /// <param name="input">Input data to process</param>
+    /// <returns>Captured console output</returns>
+    protected string ExecuteSolution(List<string> input)
+    {
+        var originalOut = Console.Out;
+        var stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
 
-    // Act - Run the solution multiple times
-    var result1 = ExecuteSolution(input);
-    var result2 = ExecuteSolution(input);
+        try
+        {
+            // Create a new instance for each test to ensure clean state
+            var instance = new T();
 
-    // Assert - Results should be consistent
-    Assert.Equal(result1, result2);
-  }
+            // Detect which test is calling this method and determine the part context
+            var partContext = BaseDayTest<T>.DetectTestContext();
 
-  #endregion
+            // Process input (this would need to be implemented by the specific day)
+            ProcessInput(instance, input, partContext);
 
-  #region Helper Methods for Subclasses
+            return stringWriter.ToString().Trim();
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
+    }
 
-  /// <summary>
-  /// Helper method for subclasses to assert specific parts of the solution
-  /// </summary>
-  /// <param name="input">Input data</param>
-  /// <param name="expected">Expected result</param>
-  /// <param name="description">Description for test output</param>
-  protected void AssertSolution(List<string> input, string expected, string description)
-  {
-    var result = ExecuteSolution(input);
-    Assert.Equal(expected, result);
-    Output.WriteLine($"{description}: PASSED - {result}");
-  }
+    /// <summary>
+    /// Detects which part to execute based on the calling test method
+    /// </summary>
+    /// <returns>The part context to execute</returns>
+    private static TestPartContext DetectTestContext()
+    {
+        var stackTrace = new System.Diagnostics.StackTrace();
+        var testName = stackTrace.GetFrames()
+            .Select(f => f.GetMethod()?.Name)
+            .FirstOrDefault(m => m?.Contains("Part1_ExampleInput_ShouldMatchExpected") == true ||
+                                m?.Contains("Part2_ExampleInput_ShouldMatchExpected") == true);
 
-  /// <summary>
-  /// Helper method to test solution with custom timeout
-  /// </summary>
-  /// <param name="input">Input data</param>
-  /// <param name="expected">Expected result</param>
-  /// <param name="timeoutMs">Custom timeout in milliseconds</param>
-  /// <param name="description">Description for test output</param>
-  protected void AssertSolutionWithTimeout(List<string> input, string expected, int timeoutMs, string description)
-  {
-    var startTime = DateTime.UtcNow;
-    var result = ExecuteSolution(input);
-    var executionTime = DateTime.UtcNow - startTime;
+        if (testName?.Contains("Part1_") == true)
+            return TestPartContext.Part1;
+        else if (testName?.Contains("Part2_") == true)
+            return TestPartContext.Part2;
+        else
+            return TestPartContext.Both;
+    }
 
-    Assert.Equal(expected, result);
-    Assert.True(executionTime.TotalMilliseconds < timeoutMs,
-        $"{description} exceeded timeout: {executionTime.TotalMilliseconds:F2}ms > {timeoutMs}ms");
+    /// <summary>
+    /// Default implementation that handles Part1/Part2 execution logic
+    /// Derived classes can override this if they need custom behavior
+    /// </summary>
+    /// <param name="instance">The day instance</param>
+    /// <param name="input">The input data</param>
+    /// <param name="context">The test context indicating which part to execute</param>
+    protected virtual void ProcessInput(T instance, List<string> input, TestPartContext context)
+    {
+        switch (context)
+        {
+            case TestPartContext.Part1:
+                Console.WriteLine(instance.Part1(input));
+                break;
+            case TestPartContext.Part2:
+                Console.WriteLine(instance.Part2(input));
+                break;
+            case TestPartContext.Both:
+                Console.WriteLine($"Part1: {instance.Part1(input)}");
+                Console.WriteLine($"Part2: {instance.Part2(input)}");
+                break;
+        }
+    }
 
-    Output.WriteLine($"{description}: PASSED - {result} ({executionTime.TotalMilliseconds:F2}ms)");
-  }
+    #region Test Methods
 
-  #endregion
+    /// <summary>
+    /// Tests that the example input produces the expected result for part 1
+    /// </summary>
+    [Fact]
+    public void Part1_ExampleInput_ShouldMatchExpected()
+    {
+        // Arrange
+        var exampleInput = ReadInput(useExample: true);
 
-  public void Dispose()
-  {
-    // Cleanup if needed
-    GC.SuppressFinalize(this);
-  }
+        // Act
+        var startTime = DateTime.UtcNow;
+        string result = ExecuteSolution(exampleInput);
+        var executionTime = DateTime.UtcNow - startTime;
+
+        // Output timing information
+        Output.WriteLine($"Part 1 execution time: {executionTime.TotalMilliseconds:F2}ms");
+
+        // Assert
+        Assert.Equal(Part1ExampleExpected, result);
+
+        // Performance assertion
+        Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
+            $"Part 1 exceeded maximum execution time of {MaxExecutionTimeMs}ms (actual: {executionTime.TotalMilliseconds:F2}ms)");
+    }
+
+    /// <summary>
+    /// Tests that the example input produces the expected result for part 2
+    /// </summary>
+    [Fact]
+    public void Part2_ExampleInput_ShouldMatchExpected()
+    {
+        // Arrange
+        var exampleInput = ReadInput(useExample: true);
+
+        // Act
+        var startTime = DateTime.UtcNow;
+        string result = ExecuteSolution(exampleInput);
+        var executionTime = DateTime.UtcNow - startTime;
+
+        // Output timing information
+        Output.WriteLine($"Part 2 execution time: {executionTime.TotalMilliseconds:F2}ms");
+
+        // Assert
+        Assert.Equal(Part2ExampleExpected, result);
+
+        // Performance assertion
+        Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
+            $"Part 2 exceeded maximum execution time of {MaxExecutionTimeMs}ms (actual: {executionTime.TotalMilliseconds:F2}ms)");
+    }
+
+    /// <summary>
+    /// Tests against actual input (disabled by default to avoid spoilers)
+    /// </summary>
+    [Fact]
+    public void Part1_ActualInput_ShouldComplete()
+    {
+        if (!TestAgainstActualInput)
+        {
+            Output.WriteLine("Skipping actual input test - TestAgainstActualInput is false");
+            return;
+        }
+
+        // Arrange
+        var actualInput = ReadInput(useExample: false);
+
+        // Act
+        var startTime = DateTime.UtcNow;
+        string result = ExecuteSolution(actualInput);
+        var executionTime = DateTime.UtcNow - startTime;
+
+        // Output results
+        Output.WriteLine($"Part 1 actual result: {result}");
+        Output.WriteLine($"Part 1 actual execution time: {executionTime.TotalMilliseconds:F2}ms");
+
+        // Assert - just verify it completes without throwing
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+
+        // Performance assertion for actual input
+        Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs * 2,
+            $"Part 1 actual input exceeded extended execution time of {MaxExecutionTimeMs * 2}ms");
+    }
+
+    /// <summary>
+    /// Performance test to ensure solution completes within reasonable time
+    /// </summary>
+    [Fact]
+    public void PerformanceTest_ShouldCompleteWithinTimeLimit()
+    {
+        // Arrange
+        var testInput = ReadInput(useExample: true);
+
+        // Act & Assert with timeout
+        var exception = Record.Exception(() =>
+        {
+            var startTime = DateTime.UtcNow;
+            ExecuteSolution(testInput);
+            var executionTime = DateTime.UtcNow - startTime;
+
+            Assert.True(executionTime.TotalMilliseconds < MaxExecutionTimeMs,
+                $"Solution exceeded performance threshold: {executionTime.TotalMilliseconds:F2}ms > {MaxExecutionTimeMs}ms");
+        });
+
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Tests that the solution can be instantiated multiple times (stateless behavior)
+    /// </summary>
+    [Fact]
+    public void InstantiationTest_ShouldBeStateless()
+    {
+        // Arrange
+        var input = ReadInput(useExample: true);
+
+        // Act - Run the solution multiple times
+        var result1 = ExecuteSolution(input);
+        var result2 = ExecuteSolution(input);
+
+        // Assert - Results should be consistent
+        Assert.Equal(result1, result2);
+    }
+
+    #endregion
+
+    #region Helper Methods for Subclasses
+
+    /// <summary>
+    /// Helper method for subclasses to assert specific parts of the solution
+    /// </summary>
+    /// <param name="input">Input data</param>
+    /// <param name="expected">Expected result</param>
+    /// <param name="description">Description for test output</param>
+    protected void AssertSolution(List<string> input, string expected, string description)
+    {
+        var result = ExecuteSolution(input);
+        Assert.Equal(expected, result);
+        Output.WriteLine($"{description}: PASSED - {result}");
+    }
+
+    /// <summary>
+    /// Helper method to test solution with custom timeout
+    /// </summary>
+    /// <param name="input">Input data</param>
+    /// <param name="expected">Expected result</param>
+    /// <param name="timeoutMs">Custom timeout in milliseconds</param>
+    /// <param name="description">Description for test output</param>
+    protected void AssertSolutionWithTimeout(List<string> input, string expected, int timeoutMs, string description)
+    {
+        var startTime = DateTime.UtcNow;
+        var result = ExecuteSolution(input);
+        var executionTime = DateTime.UtcNow - startTime;
+
+        Assert.Equal(expected, result);
+        Assert.True(executionTime.TotalMilliseconds < timeoutMs,
+            $"{description} exceeded timeout: {executionTime.TotalMilliseconds:F2}ms > {timeoutMs}ms");
+
+        Output.WriteLine($"{description}: PASSED - {result} ({executionTime.TotalMilliseconds:F2}ms)");
+    }
+
+    #endregion
+
+    public void Dispose()
+    {
+        // Cleanup if needed
+        GC.SuppressFinalize(this);
+    }
 }

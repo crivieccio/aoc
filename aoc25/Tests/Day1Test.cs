@@ -1,4 +1,5 @@
 using Solutions;
+
 using Xunit.Abstractions;
 
 namespace Tests;
@@ -10,11 +11,11 @@ namespace Tests;
 /// </summary>
 public class Day1Test(ITestOutputHelper output) : BaseDayTest<Day1>(output) // Replace 'Day1' with your actual class
 {
-  protected override int DayNumber => 1;
+    protected override int DayNumber => 1;
 
-  protected override string Part1ExampleExpected => "3"; // Expected result from example
-  protected override string Part2ExampleExpected => "6"; // Expected result from second example
+    protected override string Part1ExampleExpected => "3"; // Expected result from example
+    protected override string Part2ExampleExpected => "6"; // Expected result from second example
 
-  // Enable this only after you've solved the day and want to test against actual input
-  // protected override bool TestAgainstActualInput => true;
+    // Enable this only after you've solved the day and want to test against actual input
+    // protected override bool TestAgainstActualInput => true;
 }
