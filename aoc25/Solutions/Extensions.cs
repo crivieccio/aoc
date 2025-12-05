@@ -1,13 +1,16 @@
 
 namespace Solutions;
 
-public static class Extensions
+public static class IEnumerableExtensions
 {
-  public static IEnumerable<long> Generate(long start, long end)
-  {
-    for (long i = start; i <= end; i++)
+    extension(IEnumerable<long>)
     {
-      yield return i;
+        public static IEnumerable<long> Generate(long start, long end)
+        {
+            for (var i = start; i < end; i++)
+            {
+                yield return i;
+            }
+        }
     }
-  }
 }
