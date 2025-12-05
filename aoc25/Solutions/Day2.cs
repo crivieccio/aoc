@@ -52,14 +52,3 @@ public partial class Day2 : BaseDay
   [GeneratedRegex(@"^(\d+)(\1)+$")]
   private static partial Regex InvalidPart2IdRegex { get; }
 }
-
-public static class Extensions
-{
-  public static IEnumerable<long> Generate(long start, long end)
-  {
-    for (long i = start; i <= end; i++)
-    {
-      yield return i;
-    }
-  }
-}
