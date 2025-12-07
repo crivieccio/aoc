@@ -14,3 +14,11 @@ public static class IEnumerableExtensions
         }
     }
 }
+
+public static class DayExtensions
+{
+    extension(List<string> input)
+    {
+        public Beam GetStartingBeam() => new(1, input[0].IndexOf('S'));
+    }
+}
