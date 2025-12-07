@@ -19,6 +19,6 @@ public static class DayExtensions
 {
     extension(List<string> input)
     {
-        public Beam GetStartingBeam() => new(1, input[0].IndexOf('S'));
+        public Beam GetStartingBeam() => new(1, input[0].IndexOf('S'), 1);
     }
 }
