@@ -10,5 +10,5 @@ public class Day9Test(ITestOutputHelper output) : BaseDayTest<Day9>(output)
 
     protected override string Part1ExampleExpected => "50";
 
-    protected override string Part2ExampleExpected => "0";
+    protected override string Part2ExampleExpected => "24";
 }
