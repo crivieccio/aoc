@@ -9,5 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Cocona" />
+    <PackageReference Include="Microsoft.Z3" />
   </ItemGroup>
 </Project>
