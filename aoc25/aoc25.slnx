@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Solutions/Solutions.csproj" />
+  <Project Path="Tests/Tests.csproj" />
+</Solution>
