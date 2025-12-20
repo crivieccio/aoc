@@ -7,10 +7,10 @@ open Types
 /// Input file management with error handling
 module Input =
 
-    let private getInputPath (dayNumber: int) (isExample: bool) =
+    let getInputPath (dayNumber: int) (isExample: bool) =
         let dayStr = Common.formatDay dayNumber
         let exampleSuffix = if isExample then "_example" else ""
-        $"../Inputs/day{dayStr}{exampleSuffix}.txt"
+        $"../aoc25/Inputs/day{dayStr}{exampleSuffix}.txt"
 
     /// Read input file for a specific day
     let readInput (dayNumber: int) : AocResult<string list> =
@@ -32,8 +32,8 @@ module Input =
         let filePath = getInputPath dayNumber true
 
         try
-            if File.Exists(filePath) then
-                File.ReadAllLines(filePath)
+            if File.Exists filePath then
+                File.ReadAllLines filePath
                 |> Array.toList
                 |> Success
             else

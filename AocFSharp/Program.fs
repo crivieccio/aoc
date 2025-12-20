@@ -80,7 +80,8 @@ let runSolution (dayStr: string) (partStr: string) =
             printfn "Execution time: %A" result.ExecutionTime
         | AocFSharp.Types.AocResult.Error error ->
             match error with
-            | AocFSharp.Types.AocError.InputFileNotFound day -> printfn "Error: Input file not found for day %02d" day
+            | AocFSharp.Types.AocError.InputFileNotFound day ->
+                printfn "Error: Input file not found for day %02d. Message: %s" day (error.ToString())
             | AocFSharp.Types.AocError.SolutionNotFound day -> printfn "Error: Solution not found for day %02d" day
             | AocFSharp.Types.AocError.InvalidInputFormat msg -> printfn "Error: Invalid input format: %s" msg
             | AocFSharp.Types.AocError.InvalidDayNumber day -> printfn "Error: Invalid day number: %s" day

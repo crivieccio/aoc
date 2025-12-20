@@ -35,12 +35,12 @@ public partial class Day1 : BaseDay
             var dir = match.Groups[1].Value == "L" ? Direction.Left : Direction.Right;
             var amount = int.Parse(match.Groups[2].Value);
             return new Turns(dir, amount);
-        }).Select(t =>
+        }).Sum(t =>
         {
             var (rotation, position) = FullRotations(startingNumber, t);
             startingNumber = position;
             return rotation;
-        }).Sum().ToString();
+        }).ToString();
 
     }
 
