@@ -1,21 +1,47 @@
 namespace AocFSharp.Days
+
 open AocFSharp.Types
 open AocFSharp.BaseDay
 
 module Day02 =
+    open FSharp.Text.RegexProvider
+    open System
+
+    type Parser = Regex<pattern= @"(?<Start>\d+)(?:-)(?<Ends>\d+)+(?:,|$)+">
+    type Range = { Start: int64; End: int64 }
+
+    let parse (strings: string list) =
+        strings
+        |> List.collect (fun s ->
+            s
+            |> Parser().TypedMatches
+            |> Seq.map (fun m ->
+                { Start = m.Start.Value |> int64
+                  End = m.Ends.Value |> int64 })
+            |> Seq.toList)
+
+    let testId id =
+        let asString = id |> string
+        let len = asString |> String.length
+        let half = len / 2
+        let firstHalf = asString.Substring(0, half)
+        let secondHalf = asString.Substring half
+        String.Equals(firstHalf, secondHalf)
+
+    let invalidIds ranges =
+        ranges
+        |> List.collect (fun r -> [ r.Start .. r.End ] |> List.filter testId)
+        |> List.sum
 
     let part1 (input: string list) : PartResult =
-        timeComputation (fun () ->
-            // TODO: Implement Day 02 Part 1
-            "42")
+        timeComputation (fun () -> input |> parse |> invalidIds)
 
     let part2 (input: string list) : PartResult =
         timeComputation (fun () ->
             // TODO: Implement Day 02 Part 2
             "43")
 
-    let solution = {
-        DayNumber = 02
-        Part1 = part1
-        Part2 = part2
-    }
+    let solution =
+        { DayNumber = 2
+          Part1 = part1
+          Part2 = part2 }
