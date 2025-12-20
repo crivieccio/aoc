@@ -8,6 +8,7 @@ module Day02 =
     open System
 
     type Parser = Regex<pattern= @"(?<Start>\d+)(?:-)(?<Ends>\d+)+(?:,|$)+">
+    type Part2 = Regex<pattern= @"^(\d+)(\1)+$">
     type Range = { Start: int64; End: int64 }
 
     let parse (strings: string list) =
@@ -28,18 +29,20 @@ module Day02 =
         let secondHalf = asString.Substring half
         String.Equals(firstHalf, secondHalf)
 
-    let invalidIds ranges =
+    let invalidIds filterF ranges =
         ranges
-        |> List.collect (fun r -> [ r.Start .. r.End ] |> List.filter testId)
+        |> List.collect (fun r -> [ r.Start .. r.End ])
+        |> List.filter filterF
         |> List.sum
 
     let part1 (input: string list) : PartResult =
-        timeComputation (fun () -> input |> parse |> invalidIds)
+        timeComputation (fun () -> input |> parse |> invalidIds testId)
 
     let part2 (input: string list) : PartResult =
         timeComputation (fun () ->
-            // TODO: Implement Day 02 Part 2
-            "43")
+            input
+            |> parse
+            |> invalidIds (string >> Part2().IsMatch))
 
     let solution =
         { DayNumber = 2
