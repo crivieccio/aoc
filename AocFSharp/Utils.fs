@@ -40,7 +40,7 @@ module Utils =
         if len = 0 then
             list
         else
-            let n' = ((n % len) + len) % len // Handle negative rotations
+            let n' = (n % len + len) % len // Handle negative rotations
             let splitPoint = len - n'
             List.append (List.skip splitPoint list) (List.take splitPoint list)
 
@@ -54,8 +54,8 @@ module Utils =
             | 0, _ -> [ acc ]
             | _, [] -> []
             | _, x :: xs ->
-                (combinations (x :: acc) (n - 1) xs)
-                @ (combinations acc n xs)
+                combinations (x :: acc) (n - 1) xs
+                @ combinations acc n xs
 
         combinations [] k list
 
@@ -95,10 +95,10 @@ module Utils =
 
     /// Get neighbors in 4 directions (up, down, left, right)
     let get4Neighbors (x: int) (y: int) (maxX: int) (maxY: int) =
-        [ (x - 1, y)
-          (x + 1, y)
-          (x, y - 1)
-          (x, y + 1) ]
+        [ x - 1, y
+          x + 1, y
+          x, y - 1
+          x, y + 1 ]
         |> List.filter (fun (nx, ny) -> nx >= 0 && nx < maxX && ny >= 0 && ny < maxY)
 
     /// Get neighbors in 8 directions (including diagonals)
@@ -106,7 +106,7 @@ module Utils =
         [ for dx in -1 .. 1 do
               for dy in -1 .. 1 do
                   if dx <> 0 || dy <> 0 then
-                      yield (x + dx, y + dy) ]
+                      yield x + dx, y + dy ]
         |> List.filter (fun (nx, ny) -> nx >= 0 && nx < maxX && ny >= 0 && ny < maxY)
 
     /// Convert coordinates to linear index in 2D array
@@ -116,4 +116,4 @@ module Utils =
     let fromLinearIndex (index: int) (width: int) =
         let x = index % width
         let y = index / width
-        (x, y)
+        x, y

@@ -2,8 +2,10 @@ namespace AocFSharp.Days
 
 open AocFSharp.Types
 open AocFSharp.BaseDay
+open AocFSharp.Utils
 
 module Day03 =
+    open System
     open System.Text
 
     let getLargest convert bankSize (joltage: string) =
@@ -17,8 +19,18 @@ module Day03 =
 
         loop bankSize joltage (new StringBuilder())
 
+    let getLargestUsingCombinations conversion bankSize (joltage: string) =
+        joltage
+        |> Seq.toList
+        |> combinations bankSize
+        |> List.map (fun cs -> cs |> Array.ofList |> String |> conversion)
+        |> List.max
+
     let part1 (input: string list) : PartResult =
-        timeComputation (fun () -> input |> List.map (getLargest int 2) |> List.sum)
+        timeComputation (fun () ->
+            input
+            |> List.map (getLargestUsingCombinations int 2)
+            |> List.sum)
 
     let part2 (input: string list) : PartResult =
         timeComputation (fun () ->
