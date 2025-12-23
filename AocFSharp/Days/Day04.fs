@@ -36,19 +36,35 @@ module Day04 =
             | '@' -> true, value
             | _ -> false, value)
 
+    let canAccess grid =
+        grid
+        |> getNeighborCounts
+        |> flatten2DArray
+        |> Seq.filter (fun (isRoll, count) -> isRoll && count < 4)
+
+    let removableRolls grid =
+        let rec loop removable removed acc =
+            match removed with
+            | 0 -> acc
+            | _ ->
+                let newGrid =
+                    removable
+                    |> Array2D.map (fun (isRoll, count) ->
+                        match isRoll, count with
+                        | false, _ -> '.'
+                        | _, count when count < 4 -> '.'
+                        | _, _ -> '@')
+
+                loop (newGrid |> getNeighborCounts) (newGrid |> canAccess |> Seq.length) (acc + removed)
+
+        let removable = grid |> canAccess |> Seq.length
+        loop (grid |> getNeighborCounts) removable 0
+
     let part1 (input: string list) : PartResult =
-        timeComputation (fun () ->
-            input
-            |> buildGrid
-            |> getNeighborCounts
-            |> flatten2DArray
-            |> Seq.filter (fun (b, count) -> b && count < 4)
-            |> Seq.length)
+        timeComputation (fun () -> input |> buildGrid |> canAccess |> Seq.length)
 
     let part2 (input: string list) : PartResult =
-        timeComputation (fun () ->
-            // TODO: Implement Day 04 Part 2
-            "43")
+        timeComputation (fun () -> input |> buildGrid |> removableRolls)
 
     let solution =
         { DayNumber = 4
