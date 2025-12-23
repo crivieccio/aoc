@@ -1,8 +1,6 @@
 namespace AocFSharp
 
 open System
-open System.Collections.Generic
-open System.Linq
 
 /// Utility functions for common operations
 module Utils =
@@ -88,11 +86,17 @@ module Utils =
         if a = 0 || b = 0 then
             0
         else
-            abs (a * b) / (gcd a b)
+            abs (a * b) / gcd a b
 
     /// Create a 2D array filled with default value
     let create2DArray (rows: int) (cols: int) (defaultValue: 'T) : 'T [,] = Array2D.create rows cols defaultValue
 
+    let flatten2DArray array =
+        seq {
+            for i in 0 .. Array2D.length1 array - 1 do
+                for j in 0 .. Array2D.length2 array - 1 do
+                    yield Array2D.get array i j
+        }
     /// Get neighbors in 4 directions (up, down, left, right)
     let get4Neighbors (x: int) (y: int) (maxX: int) (maxY: int) =
         [ x - 1, y
