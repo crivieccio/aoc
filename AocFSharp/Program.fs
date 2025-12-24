@@ -28,7 +28,7 @@ module SolutionRunner =
     let runSolution (dayNumber: int) (part: int) : AocResult<PartResult> =
         match getSolution dayNumber with
         | Some solution ->
-            match readAndCleanInput dayNumber with
+            match readAndCleanExampleInput dayNumber with
             | Success input ->
                 try
                     let result =
